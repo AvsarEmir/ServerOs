@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../schemas/serveros.app.schema.json",
+  "schemaVersion": 1,
+  "id": "tasks",
+  "name": "Tasks",
+  "version": "1.0.0",
+  "description": "A lightweight task manager for your Discord workspace.",
+  "icon": "✅",
+  "category": "Project Management",
+  "entry": "index.ts",
+  "serveros": {
+    "minVersion": "0.1.5"
+  },
+  "publisher": {
+    "name": "ServerOS Contributors"
+  },
+  "permissions": ["storage:read", "storage:write", "ui:reply", "logs:write"],
+  "dependencies": [],
+  "commands": ["task"],
+  "resources": {
+    "storage": {
+      "maxBytes": 5242880
+    }
+  },
+  "license": "MIT",
+  "releaseChannel": "stable"
+}

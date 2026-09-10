@@ -1,0 +1,59 @@
+{
+  "name": "serveros",
+  "version": "0.1.5",
+  "description": "An experimental Discord operating layer with installable apps, app templates, app duplication/deletion tooling, screens, dependencies and a rebuilt App Store.",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "prebuild": "prisma generate && tsx scripts/prepare-build.ts",
+    "build": "tsc",
+    "postbuild": "tsx scripts/copy-app-assets.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck:tools": "tsc -p tsconfig.tools.json",
+    "test:dist": "node scripts/validate-dist.mjs",
+    "test:package": "tsx scripts/package-app.ts my-app --verify-only --skip-tests",
+    "check": "npm run build && npm run typecheck:tools && npm test && npm run app:test && npm run app:validate && npm run test:dist && npm run test:package && npm run app:doctor",
+    "deploy:commands": "tsx src/deploy-commands.ts",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "app:create": "tsx scripts/create-app.ts",
+    "app:duplicate": "tsx scripts/duplicate-app.ts",
+    "app:delete": "tsx scripts/delete-app.ts",
+    "app:validate": "tsx scripts/validate-app.ts",
+    "app:test": "tsx scripts/test-app.ts",
+    "app:doctor": "tsx scripts/doctor.ts",
+    "app:package": "tsx scripts/package-app.ts",
+    "app:verify-package": "tsx scripts/verify-package.ts",
+    "app:orphans": "tsx scripts/app-orphans.ts"
+  },
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "discord-app",
+    "operating-system",
+    "plugins",
+    "typescript"
+  ],
+  "author": "ServerOS Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "discord.js": "^14.26.4",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.28.2",
+    "prisma": "^6.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "overrides": {
+    "deepmerge-ts": "8.0.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

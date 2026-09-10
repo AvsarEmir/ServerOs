@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../schemas/serveros.app.schema.json",
+  "schemaVersion": 1,
+  "id": "terminal",
+  "name": "Terminal",
+  "version": "1.0.0",
+  "description": "Run OS-style commands inside ServerOS.",
+  "icon": "⌨️",
+  "category": "System",
+  "entry": "index.ts",
+  "serveros": {
+    "minVersion": "0.1.5"
+  },
+  "publisher": {
+    "name": "ServerOS Contributors"
+  },
+  "system": true,
+  "permissions": ["ui:reply", "apps:open", "system:read"],
+  "dependencies": [],
+  "commands": ["terminal"],
+  "license": "MIT",
+  "releaseChannel": "stable"
+}

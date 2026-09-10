@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://serveros.dev/schemas/serveros.app.schema.json",
+  "title": "ServerOS App Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "version",
+    "description",
+    "icon",
+    "category",
+    "entry",
+    "serveros",
+    "publisher",
+    "permissions",
+    "dependencies",
+    "commands"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{2,32}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "icon": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "category": {
+      "enum": [
+        "System",
+        "Productivity",
+        "Project Management",
+        "Knowledge",
+        "Automation",
+        "Moderation",
+        "Utility",
+        "Developer",
+        "Community",
+        "Analytics",
+        "Custom"
+      ]
+    },
+    "entry": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)(?!.*\\\\).+\\.(ts|js|mjs)$"
+    },
+    "serveros": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minVersion"],
+      "properties": {
+        "minVersion": {
+          "$ref": "#/$defs/semver"
+        },
+        "maxVersionExclusive": {
+          "$ref": "#/$defs/semver"
+        }
+      }
+    },
+    "publisher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "github": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9-]{1,39}$"
+        }
+      }
+    },
+    "system": {
+      "type": "boolean"
+    },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "storage:read",
+          "storage:write",
+          "ui:reply",
+          "apps:open",
+          "logs:write",
+          "system:read",
+          "moderation:case:create",
+          "automation:write"
+        ]
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/appId"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/appId"
+              },
+              "optional": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            }
+          }
+        ]
+      }
+    },
+    "commands": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_-]{1,32}$"
+      }
+    },
+    "settings": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "label"],
+        "properties": {
+          "type": {
+            "enum": ["boolean", "string", "number", "select"]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": {},
+          "options": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "maxBytes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "network": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["hosts"],
+          "properties": {
+            "hosts": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "publishes": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "subscribes": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "repository": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "support": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "license": {
+      "type": "string",
+      "minLength": 1
+    },
+    "template": {
+      "type": "string",
+      "minLength": 1
+    },
+    "releaseChannel": {
+      "enum": ["stable", "beta", "development"]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "keyId"],
+      "properties": {
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "keyId": {
+          "type": "string",
+          "pattern": "^ed25519:[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "appId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{2,32}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    }
+  }
+}

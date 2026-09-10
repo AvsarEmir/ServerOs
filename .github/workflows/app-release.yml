@@ -1,0 +1,80 @@
+name: ServerOS App Release
+
+on:
+  workflow_call:
+    inputs:
+      app_id:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      publish_release:
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      SERVEROS_SIGNING_PRIVATE_KEY:
+        required: true
+  workflow_dispatch:
+    inputs:
+      app_id:
+        description: App id under src/apps
+        required: true
+        type: string
+      tag:
+        description: Immutable release tag
+        required: true
+        type: string
+      version:
+        description: Exact app manifest version
+        required: true
+        type: string
+      publish_release:
+        description: Create or update a GitHub Release
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    env:
+      APP_ID: ${{ inputs.app_id }}
+      RELEASE_TAG: ${{ inputs.tag }}
+      APP_VERSION: ${{ inputs.version }}
+      SERVEROS_SIGNING_PRIVATE_KEY: ${{ secrets.SERVEROS_SIGNING_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run app:validate -- "$APP_ID"
+      - run: npm run app:test -- "$APP_ID"
+      - run: npm run app:package -- "$APP_ID" --out packages --expected-version "$APP_VERSION" --skip-tests --sign-key-env SERVEROS_SIGNING_PRIVATE_KEY
+      - run: npm run app:verify-package -- packages/*.serveros-app --public-key publisher.public.pem --require-signature
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.app_id }}-${{ inputs.tag }}
+          path: |
+            packages/*.serveros-app
+            packages/*.serveros-app.sha256
+            publisher.public.pem
+          if-no-files-found: error
+      - if: ${{ inputs.publish_release }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" packages/*.serveros-app packages/*.serveros-app.sha256 --clobber
+          else
+            gh release create "$RELEASE_TAG" packages/*.serveros-app packages/*.serveros-app.sha256 --title "$RELEASE_TAG" --generate-notes
+          fi

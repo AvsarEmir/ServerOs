@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../schemas/serveros.app.schema.json",
+  "schemaVersion": 1,
+  "id": "notes",
+  "name": "Notes",
+  "version": "1.0.0",
+  "description": "Create, search and pin notes inside your server.",
+  "icon": "📝",
+  "category": "Productivity",
+  "entry": "index.ts",
+  "serveros": {
+    "minVersion": "0.1.5"
+  },
+  "publisher": {
+    "name": "ServerOS Contributors"
+  },
+  "permissions": ["storage:read", "storage:write", "ui:reply", "logs:write"],
+  "dependencies": [],
+  "commands": ["note"],
+  "resources": {
+    "storage": {
+      "maxBytes": 5242880
+    }
+  },
+  "license": "MIT",
+  "releaseChannel": "stable"
+}

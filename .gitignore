@@ -1,0 +1,16 @@
+node_modules
+.env
+dist
+.prisma
+*.db
+*.db-journal
+.DS_Store
+coverage
+packages
+.serveros-package-test
+*.serveros-app
+*.serveros-app.sha256
+*.private.pem
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock

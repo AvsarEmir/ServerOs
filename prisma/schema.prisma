@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id            String            @id
+  name          String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  installations AppInstallation[]
+  logs          SystemLog[]
+  health        AppHealth[]
+}
+
+model AppInstallation {
+  id          String   @id @default(cuid())
+  guildId     String
+  appId       String
+  enabled     Boolean  @default(true)
+  installedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, appId])
+  @@index([guildId])
+}
+
+model AppStorage {
+  id        String   @id @default(cuid())
+  guildId   String
+  appId     String
+  key       String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([guildId, appId, key])
+  @@index([guildId, appId])
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  guildId   String?
+  appId     String?
+  level     String
+  message   String
+  meta      String?
+  createdAt DateTime @default(now())
+
+  guild Guild? @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@index([guildId])
+  @@index([appId])
+  @@index([level])
+}
+
+
+model AppHealth {
+  id            String   @id @default(cuid())
+  guildId       String
+  appId         String
+  status        String   @default("unknown")
+  lastStartedAt DateTime?
+  lastError     String?
+  crashCount    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, appId])
+  @@index([guildId])
+  @@index([appId])
+  @@index([status])
+}

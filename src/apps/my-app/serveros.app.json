@@ -1,0 +1,28 @@
+{
+  "$schema": "../../../schemas/serveros.app.schema.json",
+  "schemaVersion": 1,
+  "id": "my-app",
+  "name": "My App",
+  "version": "1.0.0",
+  "description": "A custom ServerOS app.",
+  "icon": "🧩",
+  "category": "Custom",
+  "entry": "index.ts",
+  "serveros": {
+    "minVersion": "0.1.5"
+  },
+  "publisher": {
+    "name": "ServerOS Contributors"
+  },
+  "permissions": ["storage:read", "storage:write", "ui:reply"],
+  "dependencies": [],
+  "commands": ["myapp"],
+  "resources": {
+    "storage": {
+      "maxBytes": 1048576
+    }
+  },
+  "license": "MIT",
+  "template": "simple",
+  "releaseChannel": "development"
+}
